@@ -6,7 +6,7 @@
 /*   By: crepou <crepou@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 21:26:24 by crepou            #+#    #+#             */
-/*   Updated: 2023/12/08 23:20:02 by crepou           ###   ########.fr       */
+/*   Updated: 2023/12/08 23:59:57 by crepou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,12 @@ BitcoinExchange::~BitcoinExchange(void)
 	return ;
 }
 
-BitcoinExchange & BitcoinExchange::operator=(BitcoinExchange const & rhs)
+BitcoinExchange & BitcoinExchange::operator=(BitcoinExchange const & obj)
 {
-	(void)rhs;
+	if (this != &obj)
+	{
+		this->_data = obj._data;
+	}
 	return (*this);
 }
 

@@ -6,7 +6,7 @@
 /*   By: crepou <crepou@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 21:25:24 by crepou            #+#    #+#             */
-/*   Updated: 2023/12/08 23:09:12 by crepou           ###   ########.fr       */
+/*   Updated: 2023/12/08 23:43:03 by crepou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class BitcoinExchange
 		BitcoinExchange(void);
 		BitcoinExchange(BitcoinExchange const & src);
 		~BitcoinExchange(void);
-		BitcoinExchange & operator=(BitcoinExchange const & rhs);
+		BitcoinExchange & operator=(BitcoinExchange const & obj);
 		
 		long long hash_func(int year, int month, int day);
 		void insert_data(int year, int month, int day, double rate);
