@@ -6,24 +6,30 @@
 /*   By: crepou <crepou@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/10 22:13:37 by crepou            #+#    #+#             */
-/*   Updated: 2023/12/11 03:37:53 by crepou           ###   ########.fr       */
+/*   Updated: 2024/01/10 23:48:28 by crepou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe(void) : _size(0), _indexJacobsthalNum(0)
+PmergeMe::PmergeMe(void) : _indexJacobsthalNum(0), _size(0), _vectorTime(0)
 {
 	return ;
 }
 
-PmergeMe::PmergeMe(std::vector<int> container) : _mainChainVector(0), _pendChainVector(0)
+PmergeMe::PmergeMe(std::vector<int> container) : _mainChainVector(0), _pendChainVector(0), _vectorTime(0)
 {
 	this->_container = container;
-	this->_size = 0;
 	this->_indexJacobsthalNum = 1;
 	this->_size = container.size();
-	this->_endOfMainChainVector = 0;
+	return ;
+}
+
+PmergeMe::PmergeMe(std::deque<int> container) : _dqMainChain(0), _dqPendChain(0), _dqTime(0)
+{
+	this->_dqContainer = container;
+	this->_indexJacobsthalNum = 1;
+	this->_dqSize = container.size();
 	return ;
 }
 
@@ -60,6 +66,19 @@ void	PmergeMe::printVector( void )
 	std::cout << std::endl;
 }
 
+void	PmergeMe::printDeque( void )
+{
+	std::deque<int>::iterator	it;
+
+	it = _dqContainer.begin();
+	while (it != _dqContainer.end())
+	{
+		std::cout << *it << " ";
+		it++;
+	}
+	std::cout << std::endl;
+}
+
 void	PmergeMe::sortPairsVector( void )
 {
 	std::vector<int>::iterator	it;
@@ -83,103 +102,114 @@ void	PmergeMe::sortPairsVector( void )
 	}
 }
 
-void	PmergeMe::merge(std::vector<int> &container, int start, int middle, int end)
+void	PmergeMe::sortPairsDeque( void )
 {
-	int		i;
-	int		j;
-	int		k;
-	int		n1;
-	int		n2;
-	int		*L;
-	int		*R;
+	std::deque<int>::iterator	it;
+	int							tmp;
 
-	n1 = middle - start + 1;
-	n2 = end - middle;
-	L = new int[n1];
-	R = new int[n2];
-	i = 0;
-	while (i < n1)
+	it = this->_dqContainer.begin();
+	while (it != this->_dqContainer.end())
 	{
-		L[i] = container[start + i];
-		i++;
-	}
-	j = 0;
-	while (j < n2)
-	{
-		R[j] = container[middle + 1 + j];
-		j++;
-	}
-	i = 0;
-	j = 0;
-	k = start;
-	while (i < n1 && j < n2)
-	{
-		if (L[i] <= R[j])
+		if (it + 1 != this->_dqContainer.end())
 		{
-			container[k] = L[i];
-			i++;
+			if (*it < *(it + 1))
+			{
+				tmp = *it;
+				*it = *(it + 1);
+				*(it + 1) = tmp;
+			}
 		}
-		else
-		{
-			container[k] = R[j];
-			j++;
-		}
-		k++;
-	}
-	while (i < n1)
-	{
-		container[k] = L[i];
-		i++;
-		k++;
-	}
-	while (j < n2)
-	{
-		container[k] = R[j];
-		j++;
-		k++;
-	}
-	delete [] L;
-	delete [] R;
-}
-
-void	PmergeMe::mergeSort(std::vector<int> &container, int start, int end)
-{
-	if (start < end)
-	{
-		int middle = start + (end - start) / 2;
-		mergeSort(container, start, middle);
-		mergeSort(container, middle + 1, end);
-		merge(container, start, middle, end);
+		if (it + 1 == this->_dqContainer.end())
+			break;
+		it += 2;
 	}
 }
 
 void	PmergeMe::sortVector()
 {
-	int _jacobsthalNum[] = {0, 1, 1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525};
+	time_t	start, end;
+	start = clock();
+	int _jacobsthalNum[] = {0, 1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525};
 
 	fillMainChainVector();
 	fillPendChainVector();
-	while (_pendChainVector.size() > 0)
+	_size = _mainChainVector.size();
+	int nextJacobsthalNum = _jacobsthalNum[_indexJacobsthalNum];
+	int i = _jacobsthalNum[_indexJacobsthalNum - 1];
+	_indexJacobsthalNum++;
+	int pendChainSize = _pendChainVector.size();
+	while (!_pendChainVector.empty() && i < nextJacobsthalNum && nextJacobsthalNum < pendChainSize)
 	{
-		int nextJacobsthalNum = _jacobsthalNum[_indexJacobsthalNum];
-		int i = _jacobsthalNum[_indexJacobsthalNum - 1];
-		std::cout << "Next Jacobsthal number: " << nextJacobsthalNum << std::endl;
-		_indexJacobsthalNum++;
-		while (!_pendChainVector.empty() && i < nextJacobsthalNum && nextJacobsthalNum < _size)
+		while (nextJacobsthalNum > -1 && pendChainSize != 0)
 		{
 			int num = _pendChainVector[nextJacobsthalNum];
-			std::cout << "Inserting " << num << std::endl;
 			binaryInsertionSort(num);
-			_pendChainVector.erase(_pendChainVector.begin() + nextJacobsthalNum - 1);
-			std::cout << "Main chain: ";
-			printVec(_mainChainVector);
-			std::cout << "Pend chain: ";
-			printVec(_pendChainVector);
+			_size++;
+			_pendChainVector.erase(_pendChainVector.begin() + nextJacobsthalNum);
+			pendChainSize = _pendChainVector.size();
+			nextJacobsthalNum--;
 		}
+		if (pendChainSize == 0)
+			break ;
+		nextJacobsthalNum = _jacobsthalNum[_indexJacobsthalNum];
+		i = _jacobsthalNum[_indexJacobsthalNum - 1];
+		_indexJacobsthalNum++;
 	}
+	while (_pendChainVector.size() > 0)
+	{
+		int num = _pendChainVector.back();
+		binaryInsertionSort(num);
+		_size++;
+		_pendChainVector.pop_back();
+	}
+	_container = _mainChainVector;
+	end = clock();
+	_vectorTime = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000000;
 }
 
-void	PmergeMe::binaryInsertionSort(int target)
+void	PmergeMe::sortDeque()
+{
+	time_t	start, end;
+	start = clock();
+	int _jacobsthalNum[] = {0, 1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525};
+
+	fillMainChainDeque();
+	fillPendChainDeque();
+	_dqSize = _dqMainChain.size();
+	int nextJacobsthalNum = _jacobsthalNum[_indexJacobsthalNum];
+	int i = _jacobsthalNum[_indexJacobsthalNum - 1];
+	_indexJacobsthalNum++;
+	int pendChainSize = _dqPendChain.size();
+	while (!_dqPendChain.empty() && i < nextJacobsthalNum && nextJacobsthalNum < pendChainSize)
+	{
+		while (nextJacobsthalNum > -1 && pendChainSize != 0)
+		{
+			int num = _dqPendChain.at(nextJacobsthalNum);
+			binaryInsertionSortDq(num);
+			_dqSize++;
+			_dqPendChain.erase(_dqPendChain.begin() + nextJacobsthalNum);
+			pendChainSize = _dqPendChain.size();
+			nextJacobsthalNum--;
+		}
+		if (pendChainSize == 0)
+			break ;
+		nextJacobsthalNum = _jacobsthalNum[_indexJacobsthalNum];
+		i = _jacobsthalNum[_indexJacobsthalNum - 1];
+		_indexJacobsthalNum++;
+	}
+	while (_dqPendChain.size() > 0)
+	{
+		int num = _dqPendChain.back();
+		binaryInsertionSortDq(num);
+		_dqSize++;
+		_dqPendChain.pop_back();
+	}
+	_dqContainer = _dqMainChain;
+	end = clock();
+	_dqTime = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000000;
+}
+
+void	PmergeMe::binaryInsertionSort(int target) //check with fixed start and end
 {
 	int		start;
 	int		end;
@@ -187,9 +217,9 @@ void	PmergeMe::binaryInsertionSort(int target)
 
 	start = 0;
 	end = _size - 1;
-	while (start <= _endOfMainChainVector)
+	while (start <= end)
 	{
-		middle = start + (_endOfMainChainVector - start) / 2;
+		middle = start + (end - start) / 2;
 		if (_mainChainVector[middle] == target)
 		{
 			_mainChainVector.insert(_mainChainVector.begin() + middle, target);
@@ -198,9 +228,33 @@ void	PmergeMe::binaryInsertionSort(int target)
 		else if (_mainChainVector[middle] < target)
 			start = middle + 1;
 		else
-			_endOfMainChainVector = middle - 1;
+			end = middle - 1;
 	}
 	_mainChainVector.insert(_mainChainVector.begin() + start, target);
+}
+
+void	PmergeMe::binaryInsertionSortDq(int target)
+{
+	int		start;
+	int		end;
+	int		middle;
+
+	start = 0;
+	end = _dqSize - 1;
+	while (start <= end)
+	{
+		middle = start + (end - start) / 2;
+		if (_dqMainChain.at(middle) == target)
+		{
+			_dqMainChain.insert(_dqMainChain.begin() + middle, target);
+			return ;
+		}
+		else if (_dqMainChain.at(middle) < target)
+			start = middle + 1;
+		else
+			end = middle - 1;
+	}
+	_dqMainChain.insert(_dqMainChain.begin() + start, target);
 }
 
 void	PmergeMe::switchPairs(int index1Large, int index1Small, int index2Large, int index2Small)
@@ -215,12 +269,25 @@ void	PmergeMe::switchPairs(int index1Large, int index1Small, int index2Large, in
 	_container[index2Small] = tmp;
 }
 
+void	PmergeMe::switchPairsDq(int index1Large, int index1Small, int index2Large, int index2Small)
+{
+	int		tmp;
+
+	tmp = _dqContainer.at(index1Large);
+	_dqContainer.at(index1Large) = _dqContainer.at(index2Large);
+	_dqContainer.at(index2Large) = tmp;
+	tmp = _dqContainer.at(index1Small);
+	_dqContainer.at(index1Small) = _dqContainer.at(index2Small);
+	_dqContainer.at(index2Small) = tmp;
+}
+
 void	PmergeMe::fillMainChainVector( void )
 {
 	int		i = 0;
 	
 	sortPairsVector();
 	std::vector<int>::iterator	it = _container.begin();
+	_mainChainVector.reserve(_size / 2);
 	while (it != _container.end())
 	{
 		if (i % 2 == 0)
@@ -231,8 +298,24 @@ void	PmergeMe::fillMainChainVector( void )
 	if (_container.size() % 2 == 1)
 		_mainChainVector.pop_back();
 	quicksort(_mainChainVector, 0, _mainChainVector.size() - 1);
-	_endOfMainChainVector = _mainChainVector.size() - 1;
+}
+
+void PmergeMe::fillMainChainDeque( void )
+{
+	int		i = 0;
 	
+	sortPairsDeque();
+	std::deque<int>::iterator	it = _dqContainer.begin();
+	while (it != _dqContainer.end())
+	{
+		if (i % 2 == 0)
+			_dqMainChain.push_back(*it);
+		it++;
+		i++;
+	}
+	if (_dqContainer.size() % 2 == 1)
+		_dqMainChain.pop_back();
+	quicksortDq(_dqMainChain, 0, _dqMainChain.size() - 1);
 }
 
 
@@ -242,6 +325,10 @@ void	PmergeMe::fillPendChainVector( void )
 	
 	sortPairsVector();
 	std::vector<int>::iterator	it = _container.begin();
+	if (_size % 2 == 0)
+		_pendChainVector.reserve(_size / 2);
+	else
+		_pendChainVector.reserve(_size / 2 + 1);
 	while (it != _container.end())
 	{
 		if (i % 2 == 1)
@@ -252,17 +339,32 @@ void	PmergeMe::fillPendChainVector( void )
 
 	if (_container.size() % 2 == 1)
 		_pendChainVector.push_back(_container[_container.size() - 1]);
-	std::cout << "Pend chain: ";
-	printVec(_pendChainVector);
 }
 
-void PmergeMe::printVec(std::vector<int> vec)
+void	PmergeMe::fillPendChainDeque( void )
 {
-    std::vector<int>::iterator it = vec.begin();
-    while (it != vec.end())
-    {
-        std::cout << *it << " ";
-        it++;
-    }
-    std::cout << std::endl;
+	int		i = 0;
+	
+	sortPairsDeque();
+	std::deque<int>::iterator	it = _dqContainer.begin();
+	while (it != _dqContainer.end())
+	{
+		if (i % 2 == 1)
+			_dqPendChain.push_back(*it);
+		it++;
+		i++;
+	}
+
+	if (_dqContainer.size() % 2 == 1)
+		_dqPendChain.push_back(_dqContainer.at(_dqContainer.size() - 1));
+}
+
+double PmergeMe::getVectorTime()
+{
+	return _vectorTime;
+}
+
+double PmergeMe::getDequeTime()
+{
+	return _dqTime;
 }

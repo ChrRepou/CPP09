@@ -6,7 +6,7 @@
 /*   By: crepou <crepou@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/10 22:13:38 by crepou            #+#    #+#             */
-/*   Updated: 2023/12/11 03:29:29 by crepou           ###   ########.fr       */
+/*   Updated: 2024/01/10 23:13:21 by crepou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include <iostream>
 # include <string>
 # include <vector>
+# include <iomanip>
+# include <deque>
 
 //# define JACOBSTHAL_NUM {0, 1, 1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525}
 
@@ -46,6 +48,22 @@ int partition(std::vector<T>& v, int low, int high) {
 }
 
 template <typename T>
+int partitionDq(std::deque<T>& dq, int low, int high) {
+	T pivot = dq.at(high);
+	int i = low - 1;
+	
+	for (int j = low; j <= high - 1; ++j) {
+		if (dq.at(j) <= pivot) {
+			++i;
+			std::swap(dq.at(i), dq.at(j));
+		}
+	}
+
+	std::swap(dq.at(i + 1), dq.at(high));
+	return i + 1;
+}
+
+template <typename T>
 void quicksort(std::vector<T>& v, int low, int high) {
     if (low < high) {
         // Partition the vector and get the pivot index
@@ -57,34 +75,65 @@ void quicksort(std::vector<T>& v, int low, int high) {
     }
 }
 
+template <typename T>
+void quicksortDq(std::deque<T>& dq, int low, int high) {
+	if (low < high) {
+		int pivotIndex = partitionDq(dq, low, high);
+		quicksortDq(dq, low, pivotIndex - 1);
+		quicksortDq(dq, pivotIndex + 1, high);
+	}
+}
+
 class PmergeMe
 {
 	private:
+		int					_indexJacobsthalNum;
+		
+		//vector variables
 		std::vector<int>	_container;
 		int					_size;
-		int					_indexJacobsthalNum;
 		std::vector<int>	_mainChainVector;
 		std::vector<int>	_pendChainVector;
-		int					_endOfMainChainVector;
+		double				_vectorTime;
+
+		//deque variables
+		std::deque<int>		_dqContainer;
+		int					_dqSize;
+		std::deque<int>		_dqMainChain;
+		std::deque<int>		_dqPendChain;
+		double				_dqTime;
+
 	public:
 		PmergeMe(void);
 		PmergeMe(std::vector<int> container);
+		PmergeMe(std::deque<int> container);
 		PmergeMe(PmergeMe const &src);
 		~PmergeMe(void);
 		PmergeMe	&operator=(PmergeMe const &obj);
-
-		void		merge(std::vector<int> &container, int start, int middle, int end);
-		void		mergeSort(std::vector<int> &container, int start, int end);
+		
 		void		printVector( void );
+		void		printDeque( void );
+		
 		void		sortVector( void );
-		void 		binaryInsertionSort(int target);
-		void 		switchPairs(int index1Large, int index1Small, int index2Large, int index2Small);
-		void 		fillMainChainVector( void );
-		void 		fillPendChainVector( void );
+		void		sortDeque( void );
+		
+		void		binaryInsertionSort(int target);
+		void		binaryInsertionSortDq(int target);
+		
+		void		switchPairs(int index1Large, int index1Small, int index2Large, int index2Small);
+		void		switchPairsDq(int index1Large, int index1Small, int index2Large, int index2Small);
 
-		void 		fillVector();
+		void		fillMainChainVector( void );
+		void		fillMainChainDeque( void );
+		
+		void		fillPendChainVector( void );
+		void		fillPendChainDeque( void );
+
 		void		sortPairsVector( void );
-		void		printVec( std::vector<int> vec );
+		void		sortPairsDeque( void );
+		
+		double		getVectorTime( void );
+		double		getDequeTime( void );
 };
 
 #endif
