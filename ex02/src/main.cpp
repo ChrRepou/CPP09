@@ -6,7 +6,7 @@
 /*   By: crepou <crepou@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/10 22:21:10 by crepou            #+#    #+#             */
-/*   Updated: 2024/01/10 23:47:56 by crepou           ###   ########.fr       */
+/*   Updated: 2024/01/11 01:39:47 by crepou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,6 @@
 
 int main(int argc, char **argv)
 {
-	//PmergeMe	*pm = new PmergeMe();
-	
-	//pm->fillVector();
-	//pm->printVector(pm->_container);
-	//pm->mergeSort(pm->_container, 0, pm->_size - 1);
-	//pm->printVector(pm->_container);
-	//delete pm;
-
 	if (argc < 2)
 	{
 		std::cout << "Usage: ./a.out [integers]" << std::endl;
@@ -38,11 +30,16 @@ int main(int argc, char **argv)
 		{
 			std::cout << "Error: empty argumment" << std::endl;
 			return (1);
-		}	
+		}
 		int number = atoi(argv[i]);
 		if (number < 0)
 		{
 			std::cout << "Error: wrong argument (negative number or too big) " << std::endl;
+			return (1);
+		}
+		if (*argv[i] < '0' || *argv[i] > '9')
+		{
+			std::cout << "Error: wrong argument (not a number)" << std::endl;
 			return (1);
 		}
 		container.push_back(atoi(argv[i]));
@@ -54,6 +51,7 @@ int main(int argc, char **argv)
 	
 	std::cout << "Before: ";
 	pm.printVector();
+	std::cout << std::endl;
 	std::cout << "After: ";
 	
 	pm.sortVector();

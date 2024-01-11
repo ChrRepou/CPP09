@@ -6,7 +6,7 @@
 /*   By: crepou <crepou@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/10 22:13:38 by crepou            #+#    #+#             */
-/*   Updated: 2024/01/10 23:13:21 by crepou           ###   ########.fr       */
+/*   Updated: 2024/01/11 01:40:01 by crepou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@
 # include <vector>
 # include <iomanip>
 # include <deque>
-
-//# define JACOBSTHAL_NUM {0, 1, 1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525}
 
 
 template <typename T>

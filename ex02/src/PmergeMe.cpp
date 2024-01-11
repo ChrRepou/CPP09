@@ -6,7 +6,7 @@
 /*   By: crepou <crepou@student.42heilbronn.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/10 22:13:37 by crepou            #+#    #+#             */
-/*   Updated: 2024/01/10 23:48:28 by crepou           ###   ########.fr       */
+/*   Updated: 2024/01/11 01:39:57 by crepou           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,7 @@ void	PmergeMe::sortDeque()
 	_dqTime = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000000;
 }
 
-void	PmergeMe::binaryInsertionSort(int target) //check with fixed start and end
+void	PmergeMe::binaryInsertionSort(int target)
 {
 	int		start;
 	int		end;
